@@ -1,0 +1,949 @@
+// scss
+@use "heading";
+@use "button" ;
+
+//カラー
+$color-main: #c8e4b3;
+$color-accent: #eeeccd;
+$color-text: #675e55;
+
+// テキスト
+$gothic-text: "游ゴシック体", YuGothic, "游ゴシック Medium", "Yu Gothic Medium", "游ゴシック", "Yu Gothic", sans-serif;
+$mincho-text: 'しっぽり明朝', serif;
+
+//レイアウトインナー
+$layout-with-inner: 1200px;
+
+///ブレイクポイント
+$breakpoints: (
+  'sp': "(max-width: 767px)", 
+  'tab_2':"(min-width: 768px) and (max-width: 1030px)", 
+  'tab': "(min-width: 1029px) and (max-width: #{$layout-with-inner - 1px})", 
+  'pc': "(min-width: #{$layout-with-inner})"
+) !default;
+
+//メディアクエリ
+@mixin mq($breakpoint: sp) {
+  @media #{map-get($breakpoints, $breakpoint)} {
+    @content;
+  }
+}
+
+//リセットcss
+*,
+*::before,
+*::after{
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: $mincho-text;
+  color: $color-text;
+  font-size: 16px;
+  line-height: 1.6;
+  background: #fefefe;
+}
+
+img {
+  max-width:100%;
+  height: auto;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inheritインヘリroot ;
+
+  &:hover {
+    transition: all .3s;
+    opacity: 0.5;
+  }
+}
+
+.inner {
+  width: $layout-with-inner;
+  max-width: 100%;
+  margin: 0 auto;
+
+  @include mq('tab_2') {
+    padding-left: 20px;
+    padding-right: 20px;
+ }
+
+  @include mq('sp') {
+     padding-left: 16px;
+     padding-right: 16px;
+  }
+}
+
+section {
+  padding-bottom: 300px;
+  @include mq('sp') {
+    padding-bottom: 250px;     
+  }
+}
+
+/* ===============================================
+# header
+=============================================== */
+#header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 150px;
+  width: 100%;
+  z-index: 100;
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  height: inherit;
+}
+
+.header__nav {
+  display: flex;
+  align-items: center;
+  margin-right: auto;
+  li {
+    margin-left: 50px;
+    &:first-child {
+      margin-left: 30px;
+    }
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
+  }
+}
+
+@include mq('sp') {
+  /*アクティブになったエリア*/
+  #g-nav.panel_active{
+    /*position:fixed;にし、z-indexの数値を大きくして前面へ*/
+    position:fixed;
+    z-index: 999;
+    top: 0;
+    width:100%;
+    height: 100vh;
+  }
+
+  /*丸の拡大*/
+  .circle-bg{
+    position: fixed;
+    z-index:3;
+    /*丸の形*/
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: $color-main;
+    /*丸のスタート位置と形状*/
+    transform: scale(0);/*scaleをはじめは0に*/
+    right:-50px;
+    top:-50px;
+    transition: all .6s;/*0.6秒かけてアニメーション*/
+  }
+
+  .circle-bg.circle_active{
+  transform: scale(50);/*クラスが付与されたらscaleを拡大*/
+  }
+
+  /*ナビゲーションの縦スクロール*/
+  #g-nav-list{
+    display: none;/*はじめは表示なし*/
+    /*ナビの数が増えた場合縦スクロール*/
+    position: fixed;
+    z-index: 999; 
+    width:100%;
+    height: 100vh;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #g-nav.panel_active #g-nav-list{
+    display: block; /*クラスが付与されたら出現*/
+  }
+
+  /*ナビゲーション*/
+  #g-nav ul {
+    opacity: 0;/*はじめは透過0*/
+    /*ナビゲーション天地中央揃え※レイアウトによって調整してください。不必要なら削除*/
+    // display: block;
+    position: absolute;
+    z-index: 999;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+  }
+
+  /*背景が出現後にナビゲーションを表示*/
+  #g-nav.panel_active ul {
+    opacity:1;
+    display: block;
+
+    li {
+      /* 背景が出現後にナビゲーション li を表示※レイアウトによって調整してください。不必要なら削除*/
+      animation-name:gnaviAnime;
+      animation-duration:1s;
+      animation-delay:.2s;/*0.2 秒遅らせて出現*/
+      animation-fill-mode:forwards;
+      opacity:0;
+      margin-left: 0;
+      margin-bottom: 40px;
+    }
+    @keyframes gnaviAnime{
+      0% {
+      opacity: 0;
+      }
+      100% {
+      opacity: 1;
+      }
+      }
+  }
+
+  // ボタン
+  .open_btn{
+    position:fixed;
+    top:10px;
+    right: 10px;
+    z-index: 9999;/*ボタンを最前面に*/
+    cursor: pointer;
+    width: 50px;
+    height:50px;
+  }
+
+  /*×に変化*/  
+  .open_btn span{
+    display: inline-block;
+    transition: all .4s;
+    position: absolute;
+    left: 14px;
+    height: 3px;
+    border-radius: 2px;
+    background-color: #c0dda1;
+    width: 45%;
+  }
+
+  .open_btn span:nth-of-type(1) {
+  top:15px; 
+  }
+
+  .open_btn span:nth-of-type(2) {
+  top:23px;
+  }
+
+  .open_btn span:nth-of-type(3) {
+  top:31px;
+  }
+
+  .open_btn.active span:nth-of-type(1) {
+    top: 18px;
+    left: 18px;
+    transform: translateY(6px) rotate(-45deg);
+    width: 30%;
+  }
+
+  .open_btn.active span:nth-of-type(2) {
+  opacity: 0;
+  }
+
+  .open_btn.active span:nth-of-type(3){
+    top: 30px;
+    left: 18px;
+    transform: translateY(-6px) rotate(45deg);
+    width: 30%;
+  }
+
+  button {
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+}
+
+
+/* ===============================================
+# key visual
+=============================================== */
+.key_visual {
+  height: 760px;
+  width: 100%;
+  background: url(../img/top_img.png) no-repeat center center / cover;
+  position: relative;
+
+  @include mq('sp') {
+    height: 430px;
+    background: url(../img/top_img_sp.jpg) no-repeat center center / cover;    
+  }
+
+  .dec1 {
+    position: absolute;
+    top: 85%;
+    opacity: 0.2;
+
+    @include mq('sp') {
+      width: 40%;
+    }
+  }
+}
+
+.key_visual__content {
+  position: absolute;
+  top: 420px;
+  left: 20%;
+  transform: translate(-50%, -50%);
+
+  @include mq('sp') {
+    top: 20%;
+    left: 25%;
+  }
+}
+
+.key_visual__title {
+  @include mq('tab_2') {
+     width: 300px;
+  }
+  @include mq('sp') {
+    width: 180px;
+ }
+}
+
+.key_visual__lead {
+  text-align: center;
+  margin-top: 100px;
+  font-family: $gothic-text;
+  @include mq('tab_2') {
+    margin-top: 70px;
+  }
+  @include mq('sp') {
+    margin-top: 20px;
+  }
+}
+
+/* ===============================================
+# about us
+=============================================== */
+
+#about {
+  padding-top: 180px;
+  position: relative;
+
+  .dec2 {
+    position: absolute;
+    right: 0%;
+    bottom: 15%;
+    opacity: 0.2;
+
+    @include mq('sp') {
+      width: 40%;
+    }
+
+  }
+
+}
+
+.about__inner {
+  margin: 0 auto;
+}
+
+.about__head {
+  @include heading.heading();
+}
+
+.about__head_lead {
+  @include heading.heading_lead();
+}
+
+.about__lead {
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 62px;
+
+  @include mq('tab_2') {
+    font-size: 30px;
+    margin-bottom: 32px;
+  }
+  @include mq('sp') {
+    font-size: 21px;
+    margin-bottom: 24px;
+  }
+}
+
+.about__text {
+  @include heading.common_text();
+}
+
+.button__item {
+  @include button.button__item();
+}
+
+.button__about {
+  @include button.button_inside(0.1em);
+  margin-top: 30px;
+
+}
+
+.arrow {
+  @include button.arrow();
+}
+
+/* ===============================================
+# salon menu
+=============================================== */
+
+.salon_menu__inner {
+  margin: 0 auto;
+  position: relative;
+}
+
+.salon_menu__head {
+  @include heading.heading();
+}
+
+.salon_menu__head_lead {
+  @include heading.heading_lead();
+}
+
+.salon_menu_des {
+  padding-right: 24px;
+  width: 40vw;
+  margin: 0 auto;
+
+  @include mq('tab_2') {
+     padding: 0;
+     width: 500px;
+     margin-bottom: 20px;
+  }
+  @include mq('sp') {
+     padding: 0;
+     width: auto;
+     margin-bottom: 20px;
+
+  }
+  .salon_menu_title {
+    font-size: 20px;
+    text-align: center;
+    margin: 20px 0;
+
+    @include mq('sp') {
+       font-size: 16px;
+    }
+  }
+
+  p {
+    line-height: 2;
+
+    @include mq('sp') {
+       font-size: 14px;
+    }
+  }
+
+  .salon_menu_price {
+    padding-top: 14px;
+  }
+
+  .br_cost::before {
+    @include mq('sp') {
+			content: "\A";
+			white-space: pre;
+    }
+  }
+}
+
+.slider {
+  width:94%;
+  margin:0 auto;
+
+  @include mq('sp') {
+     width: 100%;
+  }
+
+  .menus {
+    display: flex;
+    background: #fff;
+    filter:drop-shadow(1px 10px 5px rgba(0, 0, 0, 0.1));
+    padding: 24px ; 
+    height: auto;
+
+    @include mq('tab_2') {
+      display: block;
+      height: auto;
+    }
+
+    @include mq('sp') {
+      display: block;
+      height: auto;
+      max-width: 462px;
+      min-width: 300px;
+      padding: 18px ; 
+    }
+
+    .salon_menu_img {
+      margin-top: 50px;
+      @include mq('tab_2') {
+         margin:0;
+      }
+      @include mq('sp') {
+        margin:0;
+     }
+
+    }
+
+    img {
+      margin: 0 auto;
+
+      @include mq('sp') {
+        width: 80%;
+      }
+    }
+  }
+
+  .menu_list {
+    width:70vw;
+    height:auto;
+  }
+
+  .slick-slide {
+    transform: scale(0.8);
+    transition: all .5s;
+    opacity: 0.5;
+  }
+
+  .slick-slide.slick-center{
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/*ドットナビゲーションの設定*/
+
+.slick-dots {
+  text-align:center;
+  margin:48px 0 0 0;
+
+  #slick-slide-control00::before {
+    font-size: 18px;
+    content: 'Body massage';
+    letter-spacing: 0.1em;
+  }
+  #slick-slide-control01::before {
+    font-size: 18px;
+    content: 'Stone aroma';
+    letter-spacing: 0.1em;
+  }
+  #slick-slide-control02::before {
+    font-size: 18px;
+    content: 'Reflexology';
+    letter-spacing: 0.1em;
+  }
+}
+
+.slick-dots li {
+  display:inline-block;
+  margin:10px 7px;
+}
+
+.slick-dots button {
+  outline: $color-main 1px solid;
+  display: inline-block;
+	font-size: 0;
+	text-decoration: none;
+	margin: 0;
+	border-radius: 115px;
+	min-width: 160px;
+	color: $color-text;
+	position: relative;
+  text-align: center;
+  padding: 7px 0;
+}
+
+.slick-dots .slick-active button{
+  background:linear-gradient(140deg, #c8e4b3, #eeeccd);
+}
+
+/*戻る、次へ矢印の位置*/
+.slick-prev, 
+.slick-next {
+    position: absolute;/*絶対配置にする*/
+    top: 93%;
+    cursor: pointer;/*マウスカーソルを指マークに*/
+    outline: none;/*クリックをしたら出てくる枠線を消す*/
+    border-top: 2px solid #fff;/*矢印の色*/
+    border-right: 2px solid #fff;/*矢印の色*/
+    height: 10px;
+    width: 10px;  
+
+    @include mq('tab_2') {
+       display: none;
+    }
+}
+
+.slick-prev {/*戻る矢印の位置と形状*/
+    left: 15%;
+    transform: rotate(-135deg);
+}
+
+.slick-next {/*次へ矢印の位置と形状*/
+    right: 15%;
+    transform: rotate(45deg);
+}
+
+.arrow_left_img,
+.arrow_right_img {
+  width: 57px;
+  height: 57px;
+  background-image: url(../img/circle.jpeg);
+  position: absolute;
+  top: 91%;
+  z-index: -1;
+
+  @include mq('tab_2') {
+    display: none;
+ }
+  @include mq('sp') {
+    display: none;
+  }
+}
+
+.arrow_left_img {
+  left: 15%;
+}
+
+.arrow_right_img {
+  right: 15%;
+}
+
+/* ===============================================
+# school menu
+=============================================== */
+#school_menu {
+  position: relative;
+
+  .dec3 {
+    position: absolute;
+    top: -20%;
+    opacity: 0.2;
+
+    @include mq('sp') {
+      width: 40%;
+    }
+  }
+}
+
+.school_menu__head {
+  @include heading.heading();
+}
+
+.school_menu__head_lead {
+  @include heading.heading_lead();
+}
+
+.school_menu__group {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 30px;
+
+  @include mq('sp') {
+    display: block;
+    margin: 0 auto;
+ }
+
+  .menu_course {
+    padding: 0 65px;
+
+    @include mq('sp') {
+      padding: 0;
+    }
+
+    &:first-child {
+      margin-bottom: 50px;
+    }
+
+    .menu_course_img img{
+      display: block;
+      margin: 0 auto;
+    }
+
+    .school_menu_title {
+      font-size: 24px;
+      margin:35px 0;
+      text-align: center;
+
+      @include mq('tab_2') {
+        font-size: 20px;
+        margin:20px 0;
+      }
+      @include mq('sp') {
+        margin:20px 0;
+      }
+    }
+
+    p {
+      @include heading.common_text();
+    }
+  }
+}
+
+// ボタン
+.button__school_menu {
+  margin-top: 30px;
+  @include button.button_inside(0.1em);
+}
+
+/* ===============================================
+# therapists
+=============================================== */
+#therapists {
+  position: relative;
+
+  .dec4 {
+    position: absolute;
+    top: -15%;
+    right: 0%;
+    opacity: 0.2;
+
+    @include mq('sp') {
+      width: 40%;
+    }
+  }
+}
+
+.therapists__inner {
+  margin: 0 auto;
+}
+
+.therapists__head {
+  @include heading.heading();
+}
+
+.therapists__head_lead {
+  @include heading.heading_lead();
+}
+
+.therapists_group {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 24px;
+  @include mq('sp') {
+    margin-left: 0;
+  }
+
+  .therapist {
+    text-align: center;
+    padding: 15px;
+    width: calc(33.3% - 24px * 2 / 3);
+
+    @include mq('sp') {
+      width: 100%;
+      margin-bottom: 35px;
+   }
+    &:not(:nth-child(3n + 1)) {
+      margin-left: 24px;
+      @include mq('sp') {
+        margin-left: 0;
+      }
+    }  
+
+    .therapist_name {
+      font-size: 24px;
+      margin:35px 0;
+      text-align: center;
+      @include mq('sp') {
+        margin:20px 0;
+      }
+    }
+
+    p {
+      @include heading.common_text();
+    }
+
+  }
+}
+
+// ボタン
+.button__therapist {
+  @include button.button_inside(0.1em);
+}
+
+/* ===============================================
+# contact
+=============================================== */
+#contact {
+  padding-bottom: 160px;
+  position: relative;
+
+  .dec5 {
+    position: absolute;
+    top: -20%;
+    opacity: 0.2;
+
+    @include mq('sp') {
+      width: 40%;
+    }
+  }
+
+}
+
+.contact__head {
+  @include heading.heading();
+}
+
+.contact__head_lead {
+  @include heading.heading_lead();
+}
+
+.contact__inner {
+  margin: 0 auto;
+  text-align: center;
+
+  form {
+    display: inline-block;
+
+    .group {
+      align-items: center;
+      padding: 7px;
+
+      ::placeholder {
+        font-family: $mincho-text;
+        color: #c2c897;
+      }
+    }
+
+    .group_1 {
+      display: flex;
+      text-align: center;
+    }
+  }
+}
+
+@mixin contact_form($width) {
+	border: 1px solid #f7f9e7;
+  background-color: #f7f9e7;
+	font-size: 20px;
+	padding: 10px 16px;
+	width: $width;
+
+  @include mq('sp') {
+    width: 100%;
+    font-size: 16px;
+  }
+    &:focus {
+      outline: #c2c897 1px solid;
+    }
+}
+
+
+#contact input[id="your-name"],
+#contact input[id="your-tel"] {
+  @include contact_form(318px);
+}
+
+#contact input[id="your-mail"],
+#contact input[id="your-kind"]{
+  @include contact_form(650px);
+}
+
+#contact textarea {
+  @include contact_form(650px);
+  height: 240px;
+}
+
+// ボタン
+.button__item {
+  background-color: transparent;
+  border: transparent;
+}
+
+.button__contact {
+  @include button.button_inside(0.2em);
+  padding: 8px 0;
+  font-family: $mincho-text;
+}
+
+/* ===============================================
+# footer
+=============================================== */
+.footer {
+  position: relative;
+}
+
+.footer__inner_2 {
+	position: absolute;
+	top: 110%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+  background: #fefefe;
+  width: 100%;
+  height: 200px;
+  z-index: 100;
+
+  @include mq('sp') {
+    top :130%;
+  }
+
+  p {
+    text-align: center;
+    font-size: 10px;
+    font-family: $gothic-text;
+    color: $color-text;
+    margin-top: 20px;
+  }
+}
+
+.footer_logo  img {       
+  width: 100px;
+  margin: 0 auto;
+  display: block;
+  padding-top: 30px;
+
+  @include mq('sp') {
+    padding-top: 25px;
+  }
+}
+
+.footer_content {
+  display: flex;
+
+  .footer__nav {
+    display: flex;
+    padding-top: 20px;
+    margin: 0 auto;
+    li {
+      margin-left: 30px;
+      @include mq('sp') {
+        margin-left: 10px;
+      }
+      a {
+        color: #675e55f0;
+        text-decoration: none;
+        font-size: 12px;
+        @include mq('sp') {
+          font-size: 10px;
+        }
+      }
+    }
+  }  
+}
+

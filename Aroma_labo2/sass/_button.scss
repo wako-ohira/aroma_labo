@@ -1,0 +1,75 @@
+// -----
+// ボタン
+// -----
+
+//レイアウトインナー
+$layout-with-inner: 1200px;
+
+///ブレイクポイント
+$breakpoints: (
+  'sp': "(max-width: 767px)", 
+  'tab_2':"(min-width: 768px) and (max-width: 1030px)", 
+  'tab': "(min-width: 1029px) and (max-width: #{$layout-with-inner - 1px})", 
+  'pc': "(min-width: #{$layout-with-inner})"
+) !default;
+
+//メディアクエリ
+@mixin mq($breakpoint: sp) {
+  @media #{map-get($breakpoints, $breakpoint)} {
+    @content;
+  }
+}
+
+//カラー
+$color-main: #c8e4b3;
+$color-accent: #eeeccd;
+$color-text: #675e55;
+
+// ボタンの位置
+@mixin button__item() {
+	padding: 1em;
+	text-align: center;
+}
+
+// ボタンの中
+@mixin button_inside($letter-spacing) {
+  display: inline-block;
+	font-size: 18px;
+	text-decoration: none;
+  background-image: linear-gradient(140deg, $color-main, $color-accent);
+	border-radius: 115px;
+	width: 130px;
+	color: $color-text;
+	position: relative;
+  text-align: center;
+  padding: 8px 0 8px 32px;
+  letter-spacing: $letter-spacing;
+
+	@include mq('tab') {
+		padding-left: 0px;
+	}
+	// @include mq('tab_2') {
+	// 	padding-left: 0px;
+	// }
+	@include mq('sp') {
+		padding-left: 0px;
+		font-size: 16px;
+	}
+
+}
+
+// 矢印
+@mixin arrow() {
+	font-size: 18px;
+	padding-right: 35px;
+	padding-left: 10px;
+
+	@include mq('tab') {
+		 padding-right: 0;
+		 padding-left: 8px;
+	}
+	@include mq('sp') {
+		padding-right: 0;
+		padding-left: 8px;
+ }
+}

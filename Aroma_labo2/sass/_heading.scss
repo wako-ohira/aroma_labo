@@ -1,0 +1,65 @@
+// -----
+// タイトル・テキスト
+// -----
+
+//レイアウトインナー
+$layout-with-inner: 1200px;
+
+///ブレイクポイント
+$breakpoints: (
+  'sp': "(max-width: 767px)", 
+  'tab': "(min-width: 768px) and (max-width: #{$layout-with-inner - 1px})", 
+  'pc': "(min-width: #{$layout-with-inner})"
+) !default;
+
+//メディアクエリ
+@mixin mq($breakpoint: sp) {
+  @media #{map-get($breakpoints, $breakpoint)} {
+    @content;
+  }
+}
+
+// フォントスタイル
+$gothic-text: "游ゴシック体", YuGothic, "游ゴシック Medium", "Yu Gothic Medium", "游ゴシック", "Yu Gothic", sans-serif;
+
+// タイトル
+@mixin heading() {
+  text-align: center;
+  font-size: 60px;
+  line-height: 1.2; 
+
+  @include mq('tab') {
+    font-size: 50px;
+ }
+ @include mq('sp') {
+  font-size: 40px;
+}
+
+}
+
+// サブタイトル
+@mixin heading_lead() {
+  text-align: center;
+  font-family: $gothic-text;
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  margin-bottom: 62px;
+  @include mq('sp') {
+    font-size: 13px;
+  }
+}
+
+// リード分・共通テキスト
+@mixin common_text() {
+  text-align: center;
+  line-height: 2.5;
+
+  @include mq('tab') {
+    line-height: 2;
+  }
+  @include mq('sp') {
+    font-size: 14px;
+    line-height: 2;
+  }
+
+}
